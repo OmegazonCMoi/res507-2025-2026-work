@@ -19,7 +19,23 @@ export async function buildApp() {
   });
 
   // Health check endpoint
-  app.get("/health", async () => ({ ok: true }));
+  app.get("/health", async (_req, reply) => {
+    try {
+      // Vérifie que la base de données répond correctement
+      const result = await app.pg.query("SELECT 1");
+
+      if (result.rowCount === 1) {
+        return { ok: true, db: "up" };
+      }
+
+      reply.code(500);
+      return { ok: false, db: "unexpected-result" };
+    } catch (err) {
+      app.log.error({ err }, "Health check failed");
+      reply.code(500);
+      return { ok: false, db: "down" };
+    }
+  });
 
   // Get all quotes endpoint
   app.get("/", async (_req, reply) => {
