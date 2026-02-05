@@ -20,6 +20,11 @@ export async function buildApp() {
 
   // Health check endpoint
   app.get("/health", async (_req, reply) => {
+    // Permet de désactiver la vérification DB (par ex. en CI)
+    if (process.env.SKIP_DB_HEALTHCHECK === "1") {
+      return { ok: true, db: "skipped" };
+    }
+
     try {
       // Vérifie que la base de données répond correctement
       const result = await app.pg.query("SELECT 1");
