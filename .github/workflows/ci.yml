@@ -31,7 +31,7 @@ jobs:
 
       - name: Run tests if present
         working-directory: labs/40-containerized-node-app/app
-        run: npm test --if-present
+        run: npm test
 
       - name: Build Docker image
         working-directory: labs/40-containerized-node-app
