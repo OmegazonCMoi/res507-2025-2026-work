@@ -34,7 +34,8 @@ jobs:
         run: npm test --if-present
 
       - name: Build Docker image
-        run: docker build -t quote-app -f labs/40-containerized-node-app/docker/Dockerfile .
+        working-directory: labs/40-containerized-node-app
+        run: docker build -t quote-app -f docker/Dockerfile .
 
       - name: Run container
         run: |
