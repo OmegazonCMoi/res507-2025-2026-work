@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quote-db
+  namespace: quote-lab
+spec:
+  selector:
+    matchLabels:
+      app: quote-db
+  template:
+    metadata:
+      labels:
+        app: quote-db
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:alpine
+        env:
+        - name: POSTGRES_PASSWORD
+          value: "postgres"
+        - name: POSTGRES_DB
+          value: "postgres"
+        volumeMounts:
+        - name: init-script-vol
+          mountPath: /docker-entrypoint-initdb.d
+      # On définit le volume à partir de la ConfigMap
+      volumes:
+      - name: init-script-vol
+        configMap:
+          name: db-init-script
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: quote-db
+  namespace: quote-lab
+spec:
+  ports:
+  - port: 5432
+  selector:
+    app: quote-db
